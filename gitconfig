@@ -1,0 +1,25 @@
+# 2026-04-18
+[init]
+    templatedir = /tmp/notexist # should be empty
+[user]
+    name = git
+    email = git@localhost
+[color]
+    ui = auto
+[alias]
+    br = branch
+    cm = commit
+    co = checkout
+    cp = cherry-pick
+    di = diff
+    l = log --decorate --graph --abbrev-commit --format=format:'%C(auto)%h%C(reset) - %C(cyan)%ai%C(reset) %an %C(auto)%d%C(reset)%n    %C(white)%s%C(reset)'
+    p = push
+    rb = rebase --committer-date-is-author-date
+    rbc = rebase --continue
+    rba = rebase --abort
+    s = show
+    st = status
+[rebase]
+    abbreviateCommands = true
+[include]
+    path = ~/.gitconfig.local

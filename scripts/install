@@ -1,0 +1,84 @@
+#!/bin/sh
+
+set -eu
+
+usage() {
+    cat <<'EOF'
+Usage:
+  scripts/install
+  scripts/install --home
+  scripts/install --etc
+EOF
+}
+
+mode=home
+
+if [ "$#" -gt 1 ]; then
+    usage >&2
+    exit 1
+fi
+
+if [ "$#" -eq 1 ]; then
+    case "$1" in
+        --home)
+            mode=home
+            ;;
+        --etc)
+            mode=etc
+            ;;
+        *)
+            usage >&2
+            exit 1
+            ;;
+    esac
+fi
+
+script_dir=$(CDPATH= cd -- "$(dirname -- "$0")" && pwd)
+repo_root=$(CDPATH= cd -- "$script_dir/.." && pwd)
+
+as_root() {
+    if command -v run0 >/dev/null 2>&1; then
+        run0 "$@"
+        return
+    fi
+
+    if command -v sudo >/dev/null 2>&1; then
+        sudo "$@"
+        return
+    fi
+
+    printf '%s\n' 'missing privilege helper: need run0 or sudo for --etc' >&2
+    exit 1
+}
+
+copy_file() {
+    src=$1
+    dst=$2
+
+    if [ -e "$dst" ]; then
+        printf 'backup %s -> %s.bak\n' "$dst" "$dst"
+        if [ "$mode" = etc ]; then
+            as_root cp "$dst" "$dst.bak"
+        else
+            cp "$dst" "$dst.bak"
+        fi
+    fi
+
+    printf 'install %s -> %s\n' "${src##*/}" "$dst"
+    if [ "$mode" = etc ]; then
+        as_root cp "$src" "$dst"
+        as_root chmod 644 "$dst"
+    else
+        cp "$src" "$dst"
+    fi
+}
+
+if [ "$mode" = etc ]; then
+    copy_file "$repo_root/zshrc" /etc/zsh/zshrc
+    copy_file "$repo_root/vimrc" /etc/vim/vimrc
+    copy_file "$repo_root/gitconfig" /etc/gitconfig
+else
+    copy_file "$repo_root/zshrc" "$HOME/.zshrc"
+    copy_file "$repo_root/vimrc" "$HOME/.vimrc"
+    copy_file "$repo_root/gitconfig" "$HOME/.gitconfig"
+fi

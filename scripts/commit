@@ -1,0 +1,35 @@
+#!/bin/sh
+
+set -eu
+
+script_dir=$(CDPATH= cd -- "$(dirname -- "$0")" && pwd)
+repo_root=$(CDPATH= cd -- "$script_dir/.." && pwd)
+today=$(date +%F)
+
+update_first_line() {
+    file=$1
+    comment_prefix=$2
+    src="$repo_root/$file"
+    tmpfile="$src.tmp"
+
+    awk -v line="$comment_prefix $today" '
+        NR == 1 { print line; next }
+        { print }
+    ' "$src" > "$tmpfile"
+
+    mv "$tmpfile" "$src"
+}
+
+update_first_line zshrc '#'
+update_first_line vimrc '"'
+update_first_line gitconfig '#'
+
+cd "$repo_root"
+git add -- zshrc vimrc gitconfig
+
+if git diff --cached --quiet; then
+    printf 'nothing to commit for %s\n' "$today" >&2
+    exit 1
+fi
+
+exec git commit -m "$today"

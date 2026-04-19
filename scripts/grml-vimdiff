@@ -1,0 +1,60 @@
+#!/bin/sh
+
+set -eu
+
+script_dir=$(CDPATH= cd -- "$(dirname -- "$0")" && pwd)
+repo_root=$(CDPATH= cd -- "$script_dir/.." && pwd)
+cache_file="$script_dir/cache-grml-vimdiff-hashes"
+
+tmpdir=$(mktemp -d "${TMPDIR:-/tmp}/grml-vimdiff.XXXXXX")
+trap 'rm -rf "$tmpdir"' EXIT HUP INT TERM
+new_cache="$tmpdir/cache"
+
+hash_file() {
+    if command -v sha256sum >/dev/null 2>&1; then
+        sha256sum "$1" | awk '{print $1}'
+    else
+        shasum -a 256 "$1" | awk '{print $1}'
+    fi
+}
+
+process_file() {
+    name=$1
+    url=$2
+    local_file="$repo_root/$name"
+    upstream_file="$tmpdir/$name"
+
+    if [ ! -f "$local_file" ]; then
+        printf 'missing local file: %s\n' "$local_file" >&2
+        exit 1
+    fi
+
+    curl -fsSL "$url" -o "$upstream_file"
+    new_hash=$(hash_file "$upstream_file")
+    old_hash=
+
+    if [ -f "$cache_file" ]; then
+        old_hash=$(awk -v name="$name" '$1 == name { print $2 }' "$cache_file")
+    fi
+
+    printf '%s %s\n' "$name" "$new_hash" >> "$new_cache"
+
+    if [ -z "$old_hash" ]; then
+        printf '%s\n' "$name upstream changed"
+        vim -d "$local_file" "$upstream_file"
+        return
+    fi
+
+    if [ "$old_hash" = "$new_hash" ]; then
+        printf '%s\n' "$name upstream unchanged"
+        return
+    fi
+
+    printf '%s\n' "$name upstream changed"
+    vim -d "$local_file" "$upstream_file"
+}
+
+process_file zshrc 'https://raw.githubusercontent.com/grml/grml-etc-core/refs/heads/master/etc/zsh/zshrc'
+process_file vimrc 'https://raw.githubusercontent.com/grml/grml-etc-core/refs/heads/master/etc/vim/vimrc'
+
+mv "$new_cache" "$cache_file"

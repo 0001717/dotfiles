@@ -1,4 +1,4 @@
-" 2026-04-18
+" 2026-04-19
 " Filename:      /etc/vim/vimrc
 " Purpose:       configuration file for vim
 " Authors:       grml-team (grml.org), (c) Michael Prokop <mika@grml.org>
@@ -324,7 +324,13 @@ endif
 if has('mouse')
   set mouse=i
 endif
-set clipboard=unnamedplus
+if has('clipboard')
+  if has('osxdarwin') || has('macunix')
+    set clipboard=unnamed
+  elseif has('unix')
+    set clipboard=unnamedplus
+  endif
+endif
 set viminfo=
 
 set tabstop=4

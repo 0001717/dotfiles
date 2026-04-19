@@ -1,4 +1,4 @@
-# 2026-04-18
+# 2026-04-19
 # Filename:      /etc/zsh/zshrc
 # Purpose:       config file for zsh (z shell)
 # Authors:       grml-team (grml.org), (c) Michael Prokop <mika@grml.org>
@@ -3631,11 +3631,9 @@ alias rm="rm -I"
 alias v="vim"
 alias vd="vimdiff"
 
-if [[ -d /opt/homebrew/bin ]] && [[ ":$PATH:" != *":/opt/homebrew/bin:"* ]]; then
-    PATH="/opt/homebrew/bin:$PATH"
-fi
-if [[ -d /opt/homebrew/sbin ]] && [[ ":$PATH:" != *":/opt/homebrew/sbin:"* ]]; then
-    PATH="/opt/homebrew/sbin:$PATH"
+if [[ -d /opt/homebrew/bin ]]; then
+  path=(${path:#/opt/homebrew/bin})
+  path=(/opt/homebrew/bin $path)
 fi
 export PATH
 #XXX

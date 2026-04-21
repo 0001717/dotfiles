@@ -1,4 +1,4 @@
-# 2026-04-19
+# 2026-04-20
 [init]
     templatedir = /tmp/notexist # should be empty
 [user]

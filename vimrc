@@ -1,4 +1,4 @@
-" 2026-04-19
+" 2026-04-20
 " Filename:      /etc/vim/vimrc
 " Purpose:       configuration file for vim
 " Authors:       grml-team (grml.org), (c) Michael Prokop <mika@grml.org>
@@ -347,7 +347,7 @@ set number
 set relativenumber
 set nowrap
 if &encoding =~ 'utf-8'
-  set listchars=precedes:«,extends:»,tab:»·,trail:·
+  set list listchars=precedes:«,extends:»,tab:»·,trail:·
 endif
 
 set omnifunc=syntaxcomplete#Complete

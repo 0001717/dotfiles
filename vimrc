@@ -1,4 +1,4 @@
-" 2026-04-20
+" 2026-05-03
 " Filename:      /etc/vim/vimrc
 " Purpose:       configuration file for vim
 " Authors:       grml-team (grml.org), (c) Michael Prokop <mika@grml.org>

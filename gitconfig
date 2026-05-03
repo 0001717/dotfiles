@@ -1,4 +1,4 @@
-# 2026-04-20
+# 2026-05-03
 [init]
     templatedir = /tmp/notexist # should be empty
 [user]
@@ -12,11 +12,12 @@
     co = checkout
     cp = cherry-pick
     di = diff
+    g = grep
     l = log --decorate --graph --abbrev-commit --format=format:'%C(auto)%h%C(reset) - %C(cyan)%ai%C(reset) %an %C(auto)%d%C(reset)%n    %C(white)%s%C(reset)'
     p = push
     rb = rebase --committer-date-is-author-date
-    rbc = rebase --continue
     rba = rebase --abort
+    rbc = rebase --continue
     s = show
     st = status
 [rebase]

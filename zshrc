@@ -1,4 +1,4 @@
-# 2026-04-20
+# 2026-05-03
 # Filename:      /etc/zsh/zshrc
 # Purpose:       config file for zsh (z shell)
 # Authors:       grml-team (grml.org), (c) Michael Prokop <mika@grml.org>
